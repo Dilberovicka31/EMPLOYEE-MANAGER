@@ -1,0 +1,25 @@
+{
+  "name": "EMPLOYEE-MANAGER",
+  "version": "1.0.0",
+  "description": "Employee Tracker System",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dilberovicka31/EMPLOYEE-MANAGER.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dilberovicka31/EMPLOYEE-MANAGER/issues"
+  },
+  "homepage": "https://github.com/Dilberovicka31/EMPLOYEE-MANAGER#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}
