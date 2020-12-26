@@ -1,5 +1,5 @@
 DROP DATABASE IF EXISTS employeesDB;
-CREATE database employeesDB;
+CREATE database ›;
 USE employeesDB;
 CREATE TABLE department(
   id INT AUTO_INCREMENT,
