@@ -1,10 +1,10 @@
 const db = require("./db");
 const connection = require("./db/connection");
 const inquirer = require("inquirer");
-const { addRole } = require("./db");
+const { addRole, addEmployee } = require("./db");
 
 db.getDepartment().then((result) => {
-  //   console.log(result);
+  console.log(result);
 });
 
 function askUser() {
@@ -40,6 +40,9 @@ function askUser() {
 
         case "CREATE_ROLE":
           createRole();
+          break;
+        case "CREATE_EMPLOYEE":
+          addNewEmployee();
           break;
         default:
           connection.end();
@@ -83,28 +86,50 @@ function createRole() {
           name: "name",
           choices: departmentOptions,
         },
+        {
+          message: "What is the new role title?",
+          type: "input",
+          name: "title",
+        },
+        {
+          message: "What is the salary for the role?",
+          type: "input",
+          name: "salary",
+        },
       ])
       .then((res) => {
-        addRole(res);
-        addNewRole();
+        createRole(res);
       });
   });
 }
-function addNewRole() {
-  inquirer
-    .prompt([
-      {
-        message: "What is the new role title?",
-        type: "input",
-        name: "title",
-      },
-      {
-        message: "What is the salary for the role?",
-        type: "input",
-        name: "salary",
-      },
-    ])
-    .then((res) => {
-      addRole(res);
-    });
+
+function addNewEmployee() {
+  db.getDepartment().then((department) => {
+    const departmentId = department.map((department) => ({
+      value: department.id,
+    }));
+    inquirer
+      .prompt([
+        {
+          message: "What is employee first name ?",
+          type: "input",
+          name: "first_name",
+        },
+        {
+          message: "What is employee last name?",
+          type: "input",
+          name: "last_name",
+        },
+        {
+          message: "What is employees role?",
+          type: "input",
+          name: "role",
+        },
+      ])
+      .then((res) => {
+        addRole(res);
+        console.log("New employee added");
+        askUser();
+      });
+  });
 }

@@ -22,4 +22,17 @@ module.exports = {
       }
     );
   },
+  addEmployee(data) {
+    return connection.query(
+      "INSERT INTO employee SET ?",
+
+      {
+        id: data.id,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        role_id: data.role_id,
+        manager_id: data.manager_id,
+      }
+    );
+  },
 };
