@@ -18,7 +18,7 @@ module.exports = {
         id: data.id,
         title: data.title,
         salary: data.salary,
-        department_id: data.department_id,
+        // department_id: department(id),
       }
     );
   },
@@ -30,9 +30,45 @@ module.exports = {
         id: data.id,
         first_name: data.first_name,
         last_name: data.last_name,
-        role_id: data.role_id,
+        role_id: role(id),
         manager_id: data.manager_id,
       }
+    );
+  },
+
+  addDepartment(data) {
+    return connection.query(
+      "INSERT INTO department SET ?",
+
+      {
+        id: data.id,
+        name: data.name,
+      }
+    );
+  },
+  updateRole(data) {
+    return connection.query(
+      "UPDATE role SET ? WHERE ?",
+
+      [{ id: data.id }]
+    );
+  },
+
+  // deleteDep(data) {
+  //   return connection.query(
+  //     "DELETE FROM department WHERE ?",
+
+  //     [
+  //       {
+  //         id: data.id,
+  //       },
+  //     ]
+  //   );
+  // },
+  joinDepId() {
+    return connection.query(
+      "SELECT * FROM role RIGHT JOIN employee USING(id)",
+      "SELECT * FROM department RIGHT JOIN role USING (id)"
     );
   },
 };

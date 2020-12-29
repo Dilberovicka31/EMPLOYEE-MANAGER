@@ -1,13 +1,14 @@
 const db = require("./db");
 const connection = require("./db/connection");
 const inquirer = require("inquirer");
-const { addRole, addEmployee } = require("./db");
+const { addRole, addEmployee, addDepartment, joinDepId } = require("./db");
 
 db.getDepartment().then((result) => {
-  console.log(result);
+  console.table(result);
 });
 
-function askUser() {
+//List of choices to prompt the user
+function start() {
   inquirer
     .prompt({
       name: "action",
@@ -21,6 +22,9 @@ function askUser() {
         "CREATE_DEPARTMENT",
         "CREATE_EMPLOYEE",
         "UPDATE_EMPLOYEE_ROLE",
+        "DELETE_DEPARTMENT",
+        "DELETE_ROLE",
+        "DELETE_EMPLOYEE",
         "EXIT",
       ],
     })
@@ -44,31 +48,43 @@ function askUser() {
         case "CREATE_EMPLOYEE":
           addNewEmployee();
           break;
+        case "CREATE_DEPARTMENT":
+          addNewDepartment();
+          break;
+
+        case "UPDATE_EMPLOYEE_ROLE":
+          updateNewRole();
+          break;
+
+        case "DELETE_DEPARTMENT":
+          deleteDepartment();
+          break;
+
         default:
           connection.end();
       }
     });
 }
 
-askUser();
+start();
 
 function viewDep() {
   db.getDepartment().then((result) => {
     console.table(result);
-    askUser();
+    start();
   });
 }
 
 function viewRole() {
   db.getRole().then((result) => {
     console.table(result);
-    askUser();
+    start();
   });
 }
 function viewEmployee() {
   db.getEmployee().then((result) => {
     console.table(result);
-    askUser();
+    start();
   });
 }
 function createRole() {
@@ -83,7 +99,7 @@ function createRole() {
         {
           message: "What department is this role for?",
           type: "list",
-          name: "name",
+          name: "department_id",
           choices: departmentOptions,
         },
         {
@@ -98,38 +114,91 @@ function createRole() {
         },
       ])
       .then((res) => {
-        createRole(res);
+        console.table(res);
+        addRole(res);
+        joinDepId();
+        start();
       });
   });
 }
 
 function addNewEmployee() {
+  db.addEmployee().then((result) => {
+    console.table(result);
+  });
+  inquirer
+    .prompt([
+      {
+        message: "What is employee first name ?",
+        type: "input",
+        name: "first_name",
+      },
+      {
+        message: "What is employee last name?",
+        type: "input",
+        name: "last_name",
+      },
+      {
+        message: "What is employees role?",
+        type: "input",
+        name: "role",
+      },
+    ])
+    .then((res) => {
+      addEmployee(res);
+      console.table(res);
+      start();
+    });
+}
+
+function addNewDepartment() {
+  inquirer
+    .prompt([
+      {
+        message: "What department would you like to add?",
+        type: "input",
+        name: "name",
+      },
+    ])
+    .then((res) => {
+      addDepartment(res);
+      console.table(res);
+      start();
+    });
+}
+
+function updateNewRole() {
+  db.updateRole().then((role) => {
+    const roleItem = role.map((role) => ({
+      name: title,
+      value: role_id,
+      //   value: role.salary,s
+    }));
+    updateRole(role);
+    console.log(roleItem);
+    //
+  });
+}
+function deleteDepartment() {
   db.getDepartment().then((department) => {
     const departmentId = department.map((department) => ({
       value: department.id,
+      name: department.name,
     }));
     inquirer
       .prompt([
         {
-          message: "What is employee first name ?",
-          type: "input",
-          name: "first_name",
-        },
-        {
-          message: "What is employee last name?",
-          type: "input",
-          name: "last_name",
-        },
-        {
-          message: "What is employees role?",
-          type: "input",
-          name: "role",
+          message: "What department would you like to delete?",
+          type: "list",
+          name: "department_id",
+          choices: departmentId,
         },
       ])
       .then((res) => {
-        addRole(res);
-        console.log("New employee added");
-        askUser();
+        deleteDep();
+        console.table(res);
+        joinDepId();
+        start();
       });
   });
 }
