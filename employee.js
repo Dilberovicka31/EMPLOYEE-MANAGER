@@ -116,15 +116,18 @@ function createRole() {
       .then((res) => {
         console.table(res);
         addRole(res);
-        joinDepId();
+
         start();
       });
   });
 }
 
 function addNewEmployee() {
-  db.addEmployee().then((result) => {
-    console.table(result);
+  db.addEmployee().then((employee) => {
+    const employeeList = employee.map((employee) => ({
+      value: employee.first_name,
+      name: employee.last_name,
+    }));
   });
   inquirer
     .prompt([
@@ -142,6 +145,12 @@ function addNewEmployee() {
         message: "What is employees role?",
         type: "input",
         name: "role",
+      },
+      {
+        message: "Who is the employees manager?",
+        type: "list",
+        name: "manager",
+        choices: employeeList,
       },
     ])
     .then((res) => {
@@ -163,15 +172,15 @@ function addNewDepartment() {
     .then((res) => {
       addDepartment(res);
       console.table(res);
-      start();
+      // start();
     });
 }
 
 function updateNewRole() {
   db.updateRole().then((role) => {
     const roleItem = role.map((role) => ({
-      name: title,
-      value: role_id,
+      name: role.title,
+      value: role.id,
       //   value: role.salary,s
     }));
     updateRole(role);
@@ -195,10 +204,10 @@ function deleteDepartment() {
         },
       ])
       .then((res) => {
-        deleteDep();
+        deleteDep(res);
         console.table(res);
-        joinDepId();
         start();
       });
   });
 }
+// start();

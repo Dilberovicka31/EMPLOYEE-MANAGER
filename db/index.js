@@ -2,23 +2,62 @@ const connection = require("./connection");
 
 module.exports = {
   getDepartment() {
-    return connection.query("SELECT * FROM department");
+    return connection.query(`SELECT * FROM department`);
   },
   getRole() {
-    return connection.query("SELECT * FROM role");
+    return connection.query(
+      `SELECT 
+       
+       r.title,
+       r.salary,
+       d.name
+       
+                              
+       FROM role AS r
+
+       LEFT JOIN department AS d
+       ON r.department_id = d.id`
+    );
   },
   getEmployee() {
-    return connection.query("SELECT * FROM employee");
+    return connection.query(
+      `SELECT 
+       e.first_name, 
+       e.last_name,
+       r.title,
+       r.salary,
+       d.name,
+       CONCAT(e2.first_name, " " ,e2.last_name) AS "manager name"
+                              
+       FROM employee AS e
+
+       LEFT JOIN role AS r
+       ON e.role_id = r.id
+
+       LEFT JOIN department AS d
+       ON r.department_id = d.id
+
+       LEFT JOIN employee AS e2 
+       ON e.manager_id = e2.id`
+    );
   },
   addRole(data) {
     return connection.query(
-      "INSERT INTO role SET ?",
+      `INSERT INTO role (id,title,salary)
+      SELECT 
+      r.title,
+      r.salary,
+      d.name
+      FROM
+      role AS r
+      LEFT JOIN department AS d
+       ON r.department_id = d.id`,
 
       {
         id: data.id,
         title: data.title,
         salary: data.salary,
-        // department_id: department(id),
+        department_id: data.department_id,
       }
     );
   },
@@ -46,29 +85,21 @@ module.exports = {
       }
     );
   },
-  updateRole(data) {
+  updateRole(id) {
     return connection.query(
       "UPDATE role SET ? WHERE ?",
 
-      [{ id: data.id }]
+      {}
     );
   },
 
-  // deleteDep(data) {
-  //   return connection.query(
-  //     "DELETE FROM department WHERE ?",
-
-  //     [
-  //       {
-  //         id: data.id,
-  //       },
-  //     ]
-  //   );
-  // },
-  joinDepId() {
+  deleteDep(data) {
     return connection.query(
-      "SELECT * FROM role RIGHT JOIN employee USING(id)",
-      "SELECT * FROM department RIGHT JOIN role USING (id)"
+      "DELETE FROM department WHERE ?",
+
+      {
+        name: data.name,
+      }
     );
   },
 };
