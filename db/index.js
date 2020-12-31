@@ -43,15 +43,7 @@ module.exports = {
   },
   addRole(data) {
     return connection.query(
-      `INSERT INTO role (id,title,salary)
-      SELECT 
-      r.title,
-      r.salary,
-      d.name
-      FROM
-      role AS r
-      LEFT JOIN department AS d
-       ON r.department_id = d.id`,
+      `INSERT INTO role SET ?`,
 
       {
         id: data.id,
@@ -63,14 +55,12 @@ module.exports = {
   },
   addEmployee(data) {
     return connection.query(
-      "INSERT INTO employee SET ?",
+      `INSERT INTO employee SET ?`,
 
       {
-        id: data.id,
+        role_id: data.role_id,
         first_name: data.first_name,
         last_name: data.last_name,
-        role_id: role(id),
-        manager_id: data.manager_id,
       }
     );
   },

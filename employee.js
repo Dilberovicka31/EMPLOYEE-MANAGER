@@ -123,41 +123,51 @@ function createRole() {
 }
 
 function addNewEmployee() {
-  db.addEmployee().then((employee) => {
+  db.getEmployee().then((employee) => {
     const employeeList = employee.map((employee) => ({
-      value: employee.first_name,
-      name: employee.last_name,
+      value: employee.id,
+      name: employee.first_name + " " + employee.last_name,
     }));
-  });
-  inquirer
-    .prompt([
-      {
-        message: "What is employee first name ?",
-        type: "input",
-        name: "first_name",
-      },
-      {
-        message: "What is employee last name?",
-        type: "input",
-        name: "last_name",
-      },
-      {
-        message: "What is employees role?",
-        type: "input",
-        name: "role",
-      },
-      {
-        message: "Who is the employees manager?",
-        type: "list",
-        name: "manager",
-        choices: employeeList,
-      },
-    ])
-    .then((res) => {
-      addEmployee(res);
-      console.table(res);
-      start();
+    db.getRole().then((role) => {
+      const roleList = role.map((role) => ({
+        value: role.id,
+        name: role.title,
+      }));
+
+      console.log(employeeList);
+
+      inquirer
+        .prompt([
+          {
+            message: "What is employee first name ?",
+            type: "input",
+            name: "first_name",
+          },
+          {
+            message: "What is employee last name?",
+            type: "input",
+            name: "last_name",
+          },
+          {
+            message: "What is employees role?",
+            type: "list",
+            name: "role_id",
+            choices: roleList,
+          },
+          {
+            message: "Who is the employees manager?",
+            type: "list",
+            name: "manager",
+            choices: employeeList,
+          },
+        ])
+        .then((res) => {
+          addEmployee(res);
+          console.table(res);
+          start();
+        });
     });
+  });
 }
 
 function addNewDepartment() {
