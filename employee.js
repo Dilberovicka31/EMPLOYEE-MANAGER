@@ -59,6 +59,9 @@ function start() {
         case "DELETE_DEPARTMENT":
           deleteDepartment();
           break;
+        case "DELETE_EMPLOYEE":
+          deleteEmployee();
+          break;
 
         default:
           connection.end();
@@ -187,17 +190,24 @@ function addNewDepartment() {
 }
 
 function updateNewRole() {
-  db.updateRole().then((role) => {
-    const roleItem = role.map((role) => ({
-      name: role.title,
+  db.getRole().then((role) => {
+    const roleList = role.map((role) => ({
       value: role.id,
-      //   value: role.salary,s
+      name: role.title,
     }));
-    updateRole(role);
-    console.log(roleItem);
+    inquirer.prompt([
+      {
+        message: "What employees role would you like to update?",
+        name: "id",
+        type: "list",
+        choices: roleList,
+      },
+    ]);
+    updateRole(res);
     //
   });
 }
+
 function deleteDepartment() {
   db.getDepartment().then((department) => {
     const departmentId = department.map((department) => ({
@@ -214,10 +224,32 @@ function deleteDepartment() {
         },
       ])
       .then((res) => {
-        deleteDep(res);
+        deleteDep(res.departmentId);
         console.table(res.departmentId);
         start();
       });
   });
 }
-// start();
+function deleteEmployee() {
+  db.getEmployee().then((employee) => {
+    const employeeList = employee.map((employee) => ({
+      value: employee.id,
+      name: employee.first_name + " " + employee.last_name,
+    }));
+    inquirer
+      .prompt([
+        {
+          message: "What employee would you like to remove?",
+          name: "id",
+          type: "list",
+          choices: employeeList,
+        },
+      ])
+      .then((err, res) => {
+        if (err) throw err;
+
+        removeEmployee(res);
+        console.log(selectEmployee);
+      });
+  });
+}

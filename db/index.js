@@ -41,7 +41,7 @@ module.exports = {
        ON e.manager_id = e2.id`
     );
   },
-  getManager() {
+  getManager(data) {
     return connection.query(`SELECT * FROM employees WHERE manager_id IS NULL`);
   },
   addRole(data) {
@@ -58,10 +58,9 @@ module.exports = {
   },
   addEmployee(data) {
     return connection.query(`INSERT INTO employee SET ?`, {
-      id: data.id,
-      role_id: data.role_id,
       first_name: data.first_name,
       last_name: data.last_name,
+      role_id: data.role_id,
       manager_id: data.manager_id,
     });
   },
@@ -76,13 +75,13 @@ module.exports = {
       }
     );
   },
-  // updateRole(id) {
-  //   return connection.query(
-  //     "UPDATE role SET ? WHERE ?",
+  updateRole(data) {
+    return connection.query(
+      "UPDATE role SET ? WHERE ?",
 
-  //     {}
-  //   );
-  // },
+      { id: data.id }
+    );
+  },
 
   deleteDep(data) {
     return connection.query(
@@ -93,5 +92,11 @@ module.exports = {
         name: data.name,
       }
     );
+  },
+
+  removeEmployee(data) {
+    return connection.query("DELETE FROM department WHERE id=?", {
+      id: data.id,
+    });
   },
 };
