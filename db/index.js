@@ -58,6 +58,7 @@ module.exports = {
   },
   addEmployee(data) {
     return connection.query(`INSERT INTO employee SET ?`, {
+      id: data.id,
       first_name: data.first_name,
       last_name: data.last_name,
       role_id: data.role_id,
@@ -77,9 +78,13 @@ module.exports = {
   },
   updateRole(data) {
     return connection.query(
-      "UPDATE role SET ? WHERE ?",
+      "UPDATE employee SET role_id = ? WHERE employee.first_name = ? AND employee.last_name = ?",
 
-      { id: data.id }
+      {
+        role_id: data.role_id,
+        first_name: data.first_name,
+        last_name: data.last_name,
+      }
     );
   },
 
@@ -95,7 +100,13 @@ module.exports = {
   },
 
   removeEmployee(data) {
-    return connection.query("DELETE FROM department WHERE id=?", {
+    return connection.query("DELETE FROM employee WHERE id=?", {
+      role_id: data.role_id,
+      manager_id: data.manager_id,
+    });
+  },
+  removeRole(data) {
+    return connection.query("DELETE FROM role WHERE id=?", {
       id: data.id,
     });
   },
