@@ -12,7 +12,9 @@ CREATE TABLE role(
   salary DECIMAL(15, 2),
   department_id INT,
   PRIMARY KEY (id),
-  FOREIGN KEY role(department_id) REFERENCES department(id)
+  FOREIGN KEY role(department_id) REFERENCES department(id) ON DELETE
+  SET
+    NULL
 );
 CREATE TABLE employee (
   id INT AUTO_INCREMENT,
@@ -21,6 +23,8 @@ CREATE TABLE employee (
   role_id INT,
   manager_id INT,
   PRIMARY KEY(id),
-  FOREIGN KEY (role_id) REFERENCES role(id),
-  CONSTRAINT manager_ref FOREIGN KEY (manager_id) REFERENCES employee(id)
+  FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE
+  SET
+    NULL,
+    CONSTRAINT manager_ref FOREIGN KEY (manager_id) REFERENCES employee(id)
 );

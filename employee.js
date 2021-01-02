@@ -1,7 +1,7 @@
 const db = require("./db");
 const connection = require("./db/connection");
 const inquirer = require("inquirer");
-const { addRole, addEmployee, addDepartment, joinDepId } = require("./db");
+const { addRole, addEmployee, addDepartment } = require("./db");
 
 db.getDepartment().then((result) => {
   console.table(result);
@@ -157,7 +157,7 @@ function addNewEmployee() {
           {
             message: "Who is the employees manager?",
             type: "list",
-            name: "manager",
+            name: "manager_id",
             choices: employeeList,
           },
         ])
@@ -215,7 +215,7 @@ function deleteDepartment() {
       ])
       .then((res) => {
         deleteDep(res);
-        console.table(res);
+        console.table(res.departmentId);
         start();
       });
   });
