@@ -7,10 +7,12 @@ module.exports = {
   getRole() {
     return connection.query(
       `SELECT 
+
        r.id,
        r.title,
        r.salary,
-       d.name
+       d.name,
+       d.id
        
                               
        FROM role AS r
@@ -22,7 +24,7 @@ module.exports = {
   getEmployee() {
     return connection.query(
       `SELECT 
-       e.id,
+      e.id,
        e.first_name, 
        e.last_name,
        r.id,
@@ -98,9 +100,7 @@ module.exports = {
   },
 
   deleteDep(data) {
-    return connection.query("DELETE FROM department WHERE id=?", {
-      id: data.id,
-    });
+    return connection.query("DELETE FROM department WHERE id=?", data);
   },
 
   removeEmployee(data) {

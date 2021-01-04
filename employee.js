@@ -309,7 +309,7 @@ function deleteRole() {
         },
       ])
       .then((res) => {
-        removeRole(res);
+        removeRole(res.id);
         console.table(res);
         start();
       });
