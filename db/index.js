@@ -1,5 +1,5 @@
 const connection = require("./connection");
-
+//Getting  all the queries necessary to export
 module.exports = {
   getDepartment() {
     return connection.query(`SELECT * FROM department`);
@@ -7,7 +7,7 @@ module.exports = {
   getRole() {
     return connection.query(
       `SELECT 
-       
+       r.id,
        r.title,
        r.salary,
        d.name
@@ -22,11 +22,14 @@ module.exports = {
   getEmployee() {
     return connection.query(
       `SELECT 
+       e.id,
        e.first_name, 
        e.last_name,
+       r.id,
        r.title,
        r.salary,
        d.name,
+       d.id,
        CONCAT(e2.first_name, " " ,e2.last_name) AS "manager name"
                               
        FROM employee AS e
@@ -42,7 +45,10 @@ module.exports = {
     );
   },
   getManager(data) {
-    return connection.query(`SELECT * FROM employees WHERE manager_id IS NULL`);
+    return connection.query(
+      `SELECT * FROM employees WHERE manager_id IS NULL`,
+      data
+    );
   },
   addRole(data) {
     return connection.query(
@@ -57,7 +63,7 @@ module.exports = {
     );
   },
   addEmployee(data) {
-    return connection.query(`INSERT INTO employee SET ?`, {
+    return connection.query("INSERT INTO employee SET ?", {
       id: data.id,
       first_name: data.first_name,
       last_name: data.last_name,
@@ -78,36 +84,32 @@ module.exports = {
   },
   updateRole(data) {
     return connection.query(
-      "UPDATE employee SET role_id = ? WHERE employee.first_name = ? AND employee.last_name = ?",
+      "UPDATE employee SET ? WHERE ?",
 
-      {
-        role_id: data.role_id,
-        first_name: data.first_name,
-        last_name: data.last_name,
-      }
+      [
+        {
+          role_id: data.role_id,
+        },
+        {
+          id: data.id,
+        },
+      ]
     );
   },
 
   deleteDep(data) {
-    return connection.query(
-      "DELETE FROM department WHERE id=?",
-
-      {
-        id: data.id,
-        name: data.name,
-      }
-    );
-  },
-
-  removeEmployee(data) {
-    return connection.query("DELETE FROM employee WHERE id=?", {
-      role_id: data.role_id,
-      manager_id: data.manager_id,
-    });
-  },
-  removeRole(data) {
-    return connection.query("DELETE FROM role WHERE id=?", {
+    return connection.query("DELETE FROM department WHERE id=?", {
       id: data.id,
     });
   },
+
+  removeEmployee(data) {
+    return connection.query("DELETE FROM employee WHERE id=?", data);
+  },
+  removeRole(data) {
+    return connection.query("DELETE FROM role WHERE id=?", data);
+  },
+  // viewBudget(data) {
+  //   return connection.query("SELECT SUM (salary) FROM role", data);
+  // },
 };

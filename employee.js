@@ -1,13 +1,19 @@
+//requiring all the starting files and inquirer to prompt the user questions
+
 const db = require("./db");
 const connection = require("./db/connection");
 const inquirer = require("inquirer");
-const { addRole, addEmployee, addDepartment } = require("./db");
+const {
+  addRole,
+  addEmployee,
+  addDepartment,
+  updateRole,
+  removeRole,
+  removeEmployee,
+  deleteDep,
+} = require("./db");
 
-db.getDepartment().then((result) => {
-  console.table(result);
-});
-
-//List of choices to prompt the user
+//List of choices to prompt the user and switch care depending on the choice
 function start() {
   inquirer
     .prompt({
@@ -25,6 +31,7 @@ function start() {
         "DELETE_DEPARTMENT",
         "DELETE_ROLE",
         "DELETE_EMPLOYEE",
+        "VIEW_BUDGET",
         "EXIT",
       ],
     })
@@ -62,6 +69,12 @@ function start() {
         case "DELETE_EMPLOYEE":
           deleteEmployee();
           break;
+        case "DELETE_ROLE":
+          deleteRole();
+          break;
+        case "VIEW_BUDGET":
+          viewTotalBudget();
+          break;
 
         default:
           connection.end();
@@ -71,6 +84,7 @@ function start() {
 
 start();
 
+//View department, roles and employees
 function viewDep() {
   db.getDepartment().then((result) => {
     console.table(result);
@@ -84,12 +98,15 @@ function viewRole() {
     start();
   });
 }
+
 function viewEmployee() {
   db.getEmployee().then((result) => {
     console.table(result);
     start();
   });
 }
+
+//Create new role, got department options to choose from
 function createRole() {
   db.getDepartment().then((department) => {
     const departmentOptions = department.map((department) => ({
@@ -125,6 +142,7 @@ function createRole() {
   });
 }
 
+//Add new employee, got the employee list and role list to display options to choose from
 function addNewEmployee() {
   db.getEmployee().then((employee) => {
     const employeeList = employee.map((employee) => ({
@@ -136,8 +154,6 @@ function addNewEmployee() {
         value: role.id,
         name: role.title,
       }));
-
-      console.log(employeeList);
 
       inquirer
         .prompt([
@@ -173,6 +189,7 @@ function addNewEmployee() {
   });
 }
 
+//Add new department
 function addNewDepartment() {
   inquirer
     .prompt([
@@ -185,29 +202,49 @@ function addNewDepartment() {
     .then((res) => {
       addDepartment(res);
       console.table(res);
-      // start();
+      start();
     });
 }
 
+//Update employees role
 function updateNewRole() {
-  db.getRole().then((role) => {
-    const roleList = role.map((role) => ({
-      value: role.id,
-      name: role.title,
+  db.getEmployee().then((employee) => {
+    const employeeList = employee.map((employee) => ({
+      value: employee.id,
+      name: employee.first_name + " " + employee.last_name,
     }));
-    inquirer.prompt([
-      {
-        message: "What employees role would you like to update?",
-        name: "id",
-        type: "list",
-        choices: roleList,
-      },
-    ]);
-    updateRole(res);
-    //
+    db.getRole().then((role) => {
+      const roleList = role.map((role) => ({
+        value: role.id,
+        name: role.title,
+      }));
+      inquirer
+        .prompt([
+          {
+            message: "Which employee would you like to update",
+            name: "id",
+            type: "list",
+            choices: employeeList,
+          },
+          {
+            message: "What is the new role?",
+            name: "role_id",
+            type: "list",
+            choices: roleList,
+          },
+        ])
+        .then((res) => {
+          updateRole(res);
+          console.table(res);
+          start();
+        });
+
+      //
+    });
   });
 }
 
+//Delete department function
 function deleteDepartment() {
   db.getDepartment().then((department) => {
     const departmentId = department.map((department) => ({
@@ -219,17 +256,19 @@ function deleteDepartment() {
         {
           message: "What department would you like to delete?",
           type: "list",
-          name: "department_id",
+          name: "id",
           choices: departmentId,
         },
       ])
       .then((res) => {
-        deleteDep(res.departmentId);
-        console.table(res.departmentId);
+        deleteDep(res.id);
+        console.table(res);
         start();
       });
   });
 }
+
+//Delete employee function
 function deleteEmployee() {
   db.getEmployee().then((employee) => {
     const employeeList = employee.map((employee) => ({
@@ -245,11 +284,48 @@ function deleteEmployee() {
           choices: employeeList,
         },
       ])
-      .then((err, res) => {
-        if (err) throw err;
-
+      .then((res) => {
         removeEmployee(res);
-        console.log(selectEmployee);
+        console.table(res);
+        start();
       });
   });
 }
+
+//Delete role function
+function deleteRole() {
+  db.getRole().then((role) => {
+    const roleList = role.map((role) => ({
+      value: role.id,
+      name: role.title,
+    }));
+    inquirer
+      .prompt([
+        {
+          message: "What role would you like to remove?",
+          name: "id",
+          type: "list",
+          choices: roleList,
+        },
+      ])
+      .then((res) => {
+        removeRole(res);
+        console.table(res);
+        start();
+      });
+
+    //
+  });
+}
+
+// function viewTotalBudget() {
+//   db.getRole().then((role) => {
+//     const roleList = role.map((role) => ({
+//       value: role.id,
+//       name: role.salary,
+//     }));
+
+//     viewBudget(role.salary);
+//     console.table();
+//   });
+//
