@@ -3,6 +3,27 @@
 const db = require("./db");
 const connection = require("./db/connection");
 const inquirer = require("inquirer");
+const logo = require("asciiart-logo");
+
+const text = "EMPLOYEE MANAGER";
+console.log(
+  logo({
+    name: "EMPLOYEE MANAGER",
+    font: "Speed",
+    lineChars: 10,
+    padding: 2,
+    margin: 3,
+    borderColor: "grey",
+    logoColor: "bold-green",
+    textColor: "green",
+  })
+    .emptyLine()
+    .right("version 3.7.123")
+    .emptyLine()
+    .center(text)
+    .render()
+);
+
 const {
   addRole,
   addEmployee,
