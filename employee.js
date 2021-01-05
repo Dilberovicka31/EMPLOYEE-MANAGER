@@ -282,7 +282,7 @@ function deleteDepartment() {
         },
       ])
       .then((res) => {
-        deleteDep(res.id);
+        deleteDep(res);
         console.table(res);
         start();
       });
