@@ -12,7 +12,7 @@ module.exports = {
        r.title,
        r.salary,
        d.name,
-       d.id
+       d.id AS department_id
        
                               
        FROM role AS r
@@ -24,14 +24,14 @@ module.exports = {
   getEmployee() {
     return connection.query(
       `SELECT 
-      e.id,
+       e.id, 
        e.first_name, 
        e.last_name,
-       r.id,
+      
        r.title,
        r.salary,
        d.name,
-       d.id,
+       
        CONCAT(e2.first_name, " " ,e2.last_name) AS "manager name"
                               
        FROM employee AS e
@@ -100,16 +100,13 @@ module.exports = {
   },
 
   deleteDep(data) {
-    return connection.query("DELETE FROM department WHERE id=?", data);
+    return connection.query("DELETE FROM department WHERE ?", data);
   },
 
   removeEmployee(data) {
-    return connection.query("DELETE FROM employee WHERE id=?", data);
+    return connection.query("DELETE FROM employee WHERE ?", data);
   },
   removeRole(data) {
-    return connection.query("DELETE FROM role WHERE id=?", data);
+    return connection.query("DELETE FROM role WHERE ?", data);
   },
-  // viewBudget(data) {
-  //   return connection.query("SELECT SUM (salary) FROM role", data);
-  // },
 };

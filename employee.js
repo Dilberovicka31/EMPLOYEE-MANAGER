@@ -31,7 +31,7 @@ function start() {
         "DELETE_DEPARTMENT",
         "DELETE_ROLE",
         "DELETE_EMPLOYEE",
-        "VIEW_BUDGET",
+
         "EXIT",
       ],
     })
@@ -72,9 +72,6 @@ function start() {
         case "DELETE_ROLE":
           deleteRole();
           break;
-        case "VIEW_BUDGET":
-          viewTotalBudget();
-          break;
 
         default:
           connection.end();
@@ -108,12 +105,14 @@ function viewEmployee() {
 
 //Create new role, got department options to choose from
 function createRole() {
-  db.getDepartment().then((department) => {
-    const departmentOptions = department.map((department) => ({
+  db.getDepartment().then((departments) => {
+    console.log(departments);
+    const departmentOptions = departments.map((department) => ({
       value: department.id,
       name: department.name,
     }));
 
+    console.log(departmentOptions);
     inquirer
       .prompt([
         {
@@ -208,8 +207,8 @@ function addNewDepartment() {
 
 //Update employees role
 function updateNewRole() {
-  db.getEmployee().then((employee) => {
-    const employeeList = employee.map((employee) => ({
+  db.getEmployee().then((employees) => {
+    const employeeList = employees.map((employee) => ({
       value: employee.id,
       name: employee.first_name + " " + employee.last_name,
     }));
@@ -234,6 +233,7 @@ function updateNewRole() {
           },
         ])
         .then((res) => {
+          console.log(res);
           updateRole(res);
           console.table(res);
           start();
@@ -309,7 +309,7 @@ function deleteRole() {
         },
       ])
       .then((res) => {
-        removeRole(res.id);
+        removeRole(res);
         console.table(res);
         start();
       });
@@ -317,15 +317,3 @@ function deleteRole() {
     //
   });
 }
-
-// function viewTotalBudget() {
-//   db.getRole().then((role) => {
-//     const roleList = role.map((role) => ({
-//       value: role.id,
-//       name: role.salary,
-//     }));
-
-//     viewBudget(role.salary);
-//     console.table();
-//   });
-//
